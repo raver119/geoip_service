@@ -1,9 +1,11 @@
 FROM golang:1.16-buster as builder
 
 # copy source files
+
 COPY ./*.go /sources/
 COPY ./go.mod /sources/
 COPY ./go.sum /sources/
+COPY api  /sources/api
 
 WORKDIR /sources
 

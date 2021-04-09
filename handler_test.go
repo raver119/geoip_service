@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	. "github.com/raver119/geoip_service/api"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"

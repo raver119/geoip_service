@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/oschwald/geoip2-golang"
+	. "github.com/raver119/geoip_service/api"
 	"net"
 )
 
