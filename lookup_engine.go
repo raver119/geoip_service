@@ -1,69 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"github.com/oschwald/geoip2-golang"
-	"io"
-	"log"
+	"github.com/raver119/geoip_service/api"
 	"net"
-	"net/http"
-	"os"
 )
-
-const FILE_NAME = "geodb.file"
 
 type LookupEngine struct {
 	db *geoip2.Reader
 }
 
-func NewLookupEngine() (LookupEngine, error) {
-	_, e := os.Stat("/tmp/" + FILE_NAME)
-	if e != nil {
-		log.Printf("DB file is absent, downloading...")
-		f, err := os.Create("/tmp/" + FILE_NAME)
-		if err != nil {
-			return LookupEngine{}, err
-		}
-
-		url, err := GetEnvOrError("GEOIP_URL")
-		if err != nil {
-			return LookupEngine{}, err
-		}
-
-		// file doesn't exist - download it
-		resp, err := http.Get(url)
-		if err != nil {
-			return LookupEngine{}, err
-		}
-
-		defer resp.Body.Close()
-
-		size, err := io.Copy(f, resp.Body)
-		if err != nil {
-			_ = f.Close()
-			_ = os.Remove("/tmp/" + FILE_NAME)
-			return LookupEngine{}, err
-		}
-
-		defer f.Close()
-
-		log.Printf("DB file successfully downloaded. Got %v bytes.", size)
-	}
-	//
-	db, err := geoip2.Open("/tmp/" + FILE_NAME)
+func NewLookupEngine(fileName string) (LookupEngine, error) {
+	db, err := geoip2.Open(fileName)
 	if err != nil {
+		// if file has bad format - report it, and delete, so it can be re-downloaded later again
 		return LookupEngine{}, err
 	}
 
 	return LookupEngine{db: db}, nil
 }
 
-func (e LookupEngine) LookupCity(ip net.IP, lang string) (LookupResponse, error) {
-	cr, err := e.db.City(ip)
-	if err != nil {
-		return LookupResponse{}, err
+func (e LookupEngine) LookupCity(ip net.IP, lang string) (api.LookupResponse, error) {
+	if ip == nil {
+		return api.LookupResponse{}, fmt.Errorf("nil isn't a valid IP")
 	}
 
-	return LookupResponse{
+	cr, err := e.db.City(ip)
+	if err != nil {
+		return api.LookupResponse{}, err
+	}
+
+	return api.LookupResponse{
 		ResponseLanguage: lang,
 		CountryCode:      cr.Country.IsoCode,
 		Country:          cr.Country.Names[lang],

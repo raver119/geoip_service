@@ -12,8 +12,9 @@ type GeoHandlers struct {
 }
 
 func (h GeoHandlers) Register(r *mux.Router) {
-	r.HandleFunc("/rest/v1/geo/{ip:[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}}/", h.LookupIp).Methods(http.MethodGet)
-	r.HandleFunc("/rest/v1/geo/{ip:[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}}/{lang:{a-zA-Z}{2}}", h.LookupIp).Methods(http.MethodGet)
+	r.HandleFunc("/rest/v1/geo/{ip:[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}}", h.LookupIp).Methods(http.MethodGet)
+	r.HandleFunc("/rest/v1/geo/{ip:[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}}/{lang:[a-zA-Z]{2,}}", h.LookupIp).Methods(http.MethodGet)
+	r.HandleFunc("/rest/v1/geo/health", h.LookupIp).Methods(http.MethodGet)
 }
 
 func (h GeoHandlers) LookupIp(w http.ResponseWriter, r *http.Request) {
@@ -38,4 +39,8 @@ func (h GeoHandlers) LookupIp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, _ = w.Write(response.ToJson())
+}
+
+func (h GeoHandlers) Health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }

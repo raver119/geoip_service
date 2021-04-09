@@ -21,8 +21,8 @@ type ServerEngine struct {
 	wg           *sync.WaitGroup
 }
 
-func RestServer(port int) ServerEngine {
-	e, err := NewLookupEngine()
+func RestServer(port int, geodb string) ServerEngine {
+	e, err := NewLookupEngine(geodb)
 	if err != nil {
 		panic(err)
 	}
