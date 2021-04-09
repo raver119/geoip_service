@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/raver119/geoip_service/api"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
@@ -38,7 +37,7 @@ func TestGeoHandlers_LookupIp(t *testing.T) {
 			require.Equal(t, tt.expectedCode, rw.Code)
 
 			if rw.Code == http.StatusOK {
-				var response api.LookupResponse
+				var response LookupResponse
 				_ = json.Unmarshal(rw.Body.Bytes(), &response)
 				require.Equal(t, tt.expectedCity, response.City)
 			}

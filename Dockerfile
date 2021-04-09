@@ -6,11 +6,12 @@ COPY ./go.mod /sources/
 COPY ./go.sum /sources/
 
 WORKDIR /sources
-# get dependencies
+
+# get deps
 RUN go get -v -t -d ./...
 
 # build application
-RUN go build -v .
+RUN go build -v github.com/raver119/geoip_service
 RUN mkdir /application
 RUN cp /sources/geoip_service /application/service
 
