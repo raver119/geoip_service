@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/oschwald/geoip2-golang"
-	"github.com/raver119/geoip_service/api"
 	"net"
 )
 
@@ -21,17 +20,17 @@ func NewLookupEngine(fileName string) (LookupEngine, error) {
 	return LookupEngine{db: db}, nil
 }
 
-func (e LookupEngine) LookupCity(ip net.IP, lang string) (api.LookupResponse, error) {
+func (e LookupEngine) LookupCity(ip net.IP, lang string) (LookupResponse, error) {
 	if ip == nil {
-		return api.LookupResponse{}, fmt.Errorf("nil isn't a valid IP")
+		return LookupResponse{}, fmt.Errorf("nil isn't a valid IP")
 	}
 
 	cr, err := e.db.City(ip)
 	if err != nil {
-		return api.LookupResponse{}, err
+		return LookupResponse{}, err
 	}
 
-	return api.LookupResponse{
+	return LookupResponse{
 		ResponseLanguage: lang,
 		CountryCode:      cr.Country.IsoCode,
 		Country:          cr.Country.Names[lang],
